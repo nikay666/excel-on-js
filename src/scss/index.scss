@@ -1,0 +1,13 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+$dark: rgb(37, 37, 37);
+$red: rgb(192, 68, 68);
+body{
+    background-color: $dark;
+}
+h1{
+    color: $red;
+}
