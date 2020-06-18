@@ -14,7 +14,8 @@ const jsLoaders = () => {
         {
             loader: 'babel-loader' ,
             options: {
-                presets: ['@babel/preset-env']
+                presets: ['@babel/preset-env'],
+                plugins: ['@babel/plugin-proposal-class-properties']
             }
         }
     ];
@@ -40,7 +41,7 @@ module.exports = {
             '@core': path.resolve(__dirname, 'src/core'),
         }
     },
-    devtool: isDev ? 'sourse-map' : false,
+    devtool: isDev ? 'source-map' : false,
     devServer: {
         port: 3000,
         hot: isDev
