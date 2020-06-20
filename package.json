@@ -48,6 +48,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.10.1",
     "jshint": "^2.11.1",
+    "lit-html": "^1.2.1",
     "normalize.css": "^8.0.1"
   }
 }
