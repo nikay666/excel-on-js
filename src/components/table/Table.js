@@ -4,6 +4,8 @@ import { resizeHadler } from './table.resize'
 import { shouldResize, isCell, matrix, nextSelector } from './table.functions';
 import { TableSelection } from "./TableSelection";
 import { $ } from '../../core/dom';
+import { TABLE_RESIZE } from "../../redux/types";
+import * as  actions from '../../redux/actions';
 
   
 export class Table extends ExcelComponents{
@@ -35,9 +37,9 @@ export class Table extends ExcelComponents{
         this.$on('formula:done', () => {
             this.selection.current.focus();
         });
-        this.$subscribe(state  => {
-            console.log('TableState', state);
-        })
+        // this.$subscribe(state  => {
+        //     console.log('TableState', state);
+        // })
     }
 
     selectCell($cell){
@@ -50,7 +52,7 @@ export class Table extends ExcelComponents{
             //отпрравляем на обработку в стор
             const data = await resizeHadler(this.$root, event);
             //диспатчим экшен и он отправляется в rootReducer
-            this.$dispatch({type: 'TABLE_RESIZE', data})
+            this.$dispatch(actions.tableResize(data))
         } catch (e) {
             console.warn('[MY ERROR]', e);
         }

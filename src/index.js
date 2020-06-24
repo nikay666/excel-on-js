@@ -9,9 +9,7 @@ import { rootReducer } from './redux/rootReducer';
 import { storage } from './core/utilits';
 
 //создаем стор
-const store = createStore(rootReducer, {
-    colState: {}
-});
+const store = createStore(rootReducer,storage('excel-state'));
 
 //подписываемся на стор
 
