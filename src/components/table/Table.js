@@ -45,9 +45,20 @@ export class Table extends ExcelComponents{
         this.$emit('table:select', $cell);
     }
 
+    async resizeTable(event){
+        try {
+            //отпрравляем на обработку в стор
+            const data = await resizeHadler(this.$root, event);
+            //диспатчим экшен и он отправляется в rootReducer
+            this.$dispatch({type: 'TABLE_RESIZE', data})
+        } catch (e) {
+            console.warn('[MY ERROR]', e);
+        }
+    }
+
     onMousedown(event){
         if(shouldResize(event)){
-            resizeHadler(this.$root, event);
+            this.resizeTable(event);
         }else if(isCell(event)){
             const $target = $(event.target);
             if(event.shiftKey){
