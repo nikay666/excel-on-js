@@ -20,7 +20,7 @@ export class Table extends ExcelComponents{
 
     static className = 'excel__table';
     toHTML(){
-        return createTable(35);
+        return createTable(35, this.store.getState());
     }
     prepare(){
         this.selection = new  TableSelection();
