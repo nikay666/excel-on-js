@@ -7,9 +7,10 @@ import { Table } from './components/table/Table';
 import { createStore } from './core/createStore';
 import { rootReducer } from './redux/rootReducer';
 import { storage } from './core/utilits';
+import { initialState } from './redux/initialState';
 
 //создаем стор
-const store = createStore(rootReducer,storage('excel-state'));
+const store = createStore(rootReducer,initialState);
 
 //подписываемся на стор
 
