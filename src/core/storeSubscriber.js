@@ -1,0 +1,32 @@
+import { isEqual } from "./utilits";
+
+export class storeSubscriber {
+    constructor(store){
+        this.store = store;
+        this.sub = null;
+        this.prevState =  {};
+    }
+    subscribeComponents(components){
+        this.prevState = this.store.getState();
+
+        this.sub = this.store.subscribe(state => {
+            Object.keys(state).forEach(key => {
+                console.log('Key', key);
+                if(!isEqual(this.prevState[key], state[key])){
+                    components.forEach(component => {
+                        if(component.isWatching(key)){
+                            const changes = {[key]:state[key]};
+                            component.storeChanged(changes);
+                        }
+                    })
+                }
+            });
+            this.prevState = this.store.getState();
+
+        });
+    }
+
+    subscribeFromStore(){
+        this.sub.unsubscribe()
+    }
+}
