@@ -6,6 +6,8 @@ import { TableSelection } from "./TableSelection";
 import { $ } from '../../core/dom';
 import { TABLE_RESIZE } from "../../redux/types";
 import * as  actions from '../../redux/actions';
+import { defaultStyles } from "../../constants";
+import { parse } from "../../core/parse";
 
   
 export class Table extends ExcelComponents{
@@ -31,18 +33,33 @@ export class Table extends ExcelComponents{
         const $cell = this.$root.find('[data-id="0:0"]');
         this.selectCell($cell);
 
-        this.$on('formula:input',text => {
-            this.selection.current.text(text);
-            this.updateTextInStore(text);
+        this.$on('formula:input',value => {
+            this.selection.current
+                .attr('data-value', value)
+                .text(parse(value));
+
+            // this.selection.current.text(text);
+            this.updateTextInStore(value);
         });
+
         this.$on('formula:done', () => {
             this.selection.current.focus();
         });
+
+        this.$on('toolar:applyStyle', value =>{
+            this.selection.applyStyle(value);
+            this.$dispatch(actions.applyStyle({
+                value,
+                ids:  this.selection.selectedIds
+            }))
+        })
     }
 
     selectCell($cell){
         this.selection.select($cell);
         this.$emit('table:select', $cell);
+        const styles = $cell.getStyles(Object.keys(defaultStyles));
+        this.$dispatch(actions.changeStyles(styles))
     }
 
     async resizeTable(event){

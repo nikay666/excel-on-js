@@ -6,18 +6,17 @@ import { Formula } from './components/formula/formula';
 import { Table } from './components/table/Table';
 import { createStore } from './core/createStore';
 import { rootReducer } from './redux/rootReducer';
-import { storage } from './core/utilits';
+import { storage, debounce } from './core/utilits';
 import { initialState } from './redux/initialState';
 
-//создаем стор
+
 const store = createStore(rootReducer,initialState);
 
-//подписываемся на стор
-
-store.subscribe(state => {
+const stateListener =  debounce(state =>  {
     storage('excel-state', state);
-    console.log('App state:',  state) 
-})
+}, 300);
+
+store.subscribe(stateListener);
 
 const excel = new Excel('#app', {
     components: [Header, Toolbar, Formula, Table],

@@ -11,7 +11,6 @@ export class storeSubscriber {
 
         this.sub = this.store.subscribe(state => {
             Object.keys(state).forEach(key => {
-                console.log('Key', key);
                 if(!isEqual(this.prevState[key], state[key])){
                     components.forEach(component => {
                         if(component.isWatching(key)){
