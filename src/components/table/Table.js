@@ -4,6 +4,10 @@ import { resizeHadler } from './table.resize'
 import { shouldResize, isCell, matrix, nextSelector } from './table.functions';
 import { TableSelection } from "./TableSelection";
 import { $ } from '../../core/dom';
+import { TABLE_RESIZE } from "../../redux/types";
+import * as  actions from '../../redux/actions';
+import { defaultStyles } from "../../constants";
+import { parse } from "../../core/parse";
 
   
 export class Table extends ExcelComponents{
@@ -18,7 +22,7 @@ export class Table extends ExcelComponents{
 
     static className = 'excel__table';
     toHTML(){
-        return createTable(35);
+        return createTable(35, this.store.getState());
     }
     prepare(){
         this.selection = new  TableSelection();
@@ -29,22 +33,49 @@ export class Table extends ExcelComponents{
         const $cell = this.$root.find('[data-id="0:0"]');
         this.selectCell($cell);
 
-        this.$on('formula:input',text => {
-            this.selection.current.text(text);
+        this.$on('formula:input',value => {
+            this.selection.current
+                .attr('data-value', value)
+                .text(parse(value));
+
+            // this.selection.current.text(text);
+            this.updateTextInStore(value);
         });
+
         this.$on('formula:done', () => {
             this.selection.current.focus();
         });
+
+        this.$on('toolar:applyStyle', value =>{
+            this.selection.applyStyle(value);
+            this.$dispatch(actions.applyStyle({
+                value,
+                ids:  this.selection.selectedIds
+            }))
+        })
     }
 
     selectCell($cell){
         this.selection.select($cell);
         this.$emit('table:select', $cell);
+        const styles = $cell.getStyles(Object.keys(defaultStyles));
+        this.$dispatch(actions.changeStyles(styles))
+    }
+
+    async resizeTable(event){
+        try {
+            //отпрравляем на обработку в стор
+            const data = await resizeHadler(this.$root, event);
+            //диспатчим экшен и он отправляется в rootReducer
+            this.$dispatch(actions.tableResize(data))
+        } catch (e) {
+            console.warn('[MY ERROR]', e);
+        }
     }
 
     onMousedown(event){
         if(shouldResize(event)){
-            resizeHadler(this.$root, event);
+            this.resizeTable(event);
         }else if(isCell(event)){
             const $target = $(event.target);
             if(event.shiftKey){
@@ -55,7 +86,7 @@ export class Table extends ExcelComponents{
                                 .map(id => this.$root.find(`[data-id="${id}"]`));
                 this.selection.selectGroup($cells);
             }else{
-                this.selection.select($target);
+                this.selectCell($target);
             }
         }
     }
@@ -79,8 +110,15 @@ export class Table extends ExcelComponents{
            
         }
     }
+    updateTextInStore(value){
+        this.$dispatch(actions.changeText({
+            id: this.selection.current.id(),
+            value
+        }))
+    }
 
     onInput(event){
-        this.$emit('table:input', $(event.target));
+        // this.$emit('table:input', $(event.target));
+        this.updateTextInStore($(event.target).text());
     }
 }
