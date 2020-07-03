@@ -23,7 +23,6 @@ export class Router {
 
     changePageHandler(){
         if(this.page){
-            console.log('Page')
             this.page.destroy();
         }
         this.$placeholder.clear();
