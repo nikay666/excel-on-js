@@ -1,5 +1,5 @@
 import { Router } from "./router";
-import { Page } from "../Page";
+import { Page } from "../page/Page";
 
 class DashboardPage extends Page{
     getRoot(){
@@ -31,7 +31,4 @@ describe('Router:', () => {
 
         expect($root.innerHTML).toBe('<div>dashboard</div>');
     });
-
-
-
 });
